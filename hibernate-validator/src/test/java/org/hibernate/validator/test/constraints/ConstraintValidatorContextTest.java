@@ -125,6 +125,38 @@ public class ConstraintValidatorContextTest {
 		messageAndPathList = context.getMessageAndPathList();
 		assertMessageAndPath( messageAndPathList.get( 0 ), message, "foo[test].bar[].fubar" );
 	}
+	
+	@Test void testDeeplyNestedItemsWithoutIterable()
+	{
+		String message = "message";
+		ConstraintValidatorContextImpl context = createEmptyConstraintValidatorContextImpl();
+		context = createEmptyConstraintValidatorContextImpl();
+		context.buildConstraintViolationWithTemplate( message )
+				.addNode( "foo" )
+				.addNode( "bar" )
+				.addNode( "test" )
+				.addConstraintViolation();
+		
+		List<MessageAndPath> messageAndPathList = context.getMessageAndPathList();
+		messageAndPathList = context.getMessageAndPathList();
+		assertMessageAndPath( messageAndPathList.get( 0 ), message, "foo.bar.test" );
+	}
+	
+	@Test void testDeeplyNestedItemsWithIterable()
+	{
+		String message = "message";
+		ConstraintValidatorContextImpl context = createEmptyConstraintValidatorContextImpl();
+		context.buildConstraintViolationWithTemplate( message )
+			.addNode( "foo" )
+			.addNode( "bar" ).inIterable().atKey( "test" )
+			.addNode( "fubar" )
+			.addNode( "nestedTest" )
+			.addNode( "anotherLayer" )
+			.addConstraintViolation();
+
+		List<MessageAndPath> messageAndPathList = context.getMessageAndPathList();
+		assertMessageAndPath( messageAndPathList.get( 0 ), message, "foo[test].bar.fubar.nestedTest.anotherLayer" );
+	}
 
 	@Test
 	public void testMultipleMessages() {
