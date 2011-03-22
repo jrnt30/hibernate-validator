@@ -124,16 +124,6 @@ public class ConstraintValidatorContextTest {
 
 		messageAndPathList = context.getMessageAndPathList();
 		assertMessageAndPath( messageAndPathList.get( 0 ), message, "foo[test].bar[].fubar" );
-		
-		context = createEmptyConstraintValidatorContextImpl();
-		context.buildConstraintViolationWithTemplate( message )
-				.addNode( "foo" )
-				.addNode( "bar" )
-				.addNode( "test" )
-				.addConstraintViolation();
-
-		messageAndPathList = context.getMessageAndPathList();
-		assertMessageAndPath( messageAndPathList.get( 0 ), message, "foo.bar.test" );
 	}
 	
 	@Test void testDeeplyNestedItemsWithoutIterable()
